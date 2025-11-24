@@ -3,7 +3,7 @@ import pool from '../db.js'
 
 const router = Router()
 
-router.get('/reminders', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(`SELECT * FROM reminders LIMIT 10`)
     res.json(result.rows)
@@ -13,7 +13,7 @@ router.get('/reminders', async (req: Request, res: Response) => {
   }
 })
 
-router.get('/reminders/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(`SELECT * FROM reminders WHERE id = $1`, [
       req.params.id,
