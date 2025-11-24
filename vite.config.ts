@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite'
 import path from 'path'
+import { VitePluginNode } from 'vite-plugin-node'
 
 export default defineConfig({
+  server: {
+    port: 3000,
+  },
   build: {
     outDir: 'dist',
     target: 'node22',
@@ -10,7 +14,21 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['express', 'pg', 'pg-pool', 'pgpass'],
+      external: [
+        'express',
+        'pg',
+        'pg-pool',
+        'pgpass',
+        'bcrypt',
+        'jsonwebtoken',
+        'crypto',
+        'fs',
+        'path',
+        'os',
+        'stream',
+        'util',
+        'buffer',
+      ],
     },
   },
   resolve: {
@@ -18,4 +36,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  plugins: [
+    ...VitePluginNode({
+      adapter: 'express',
+
+      appPath: 'src/index.ts',
+
+      reloadAppOnFileChange: true,
+    }),
+  ],
 })

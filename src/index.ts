@@ -4,6 +4,7 @@ import express, {
   type NextFunction,
 } from 'express'
 import remindersRouter from '@/routes/reminders'
+import authRouter from '@/routes/auth'
 import { AppError } from '@/utils/errors'
 import { errorResponse } from '@/utils/response'
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 
+app.use('/auth', authRouter) // TODO: use utils
 app.use('/reminders', remindersRouter)
 
 app.use((_req, res) => {
@@ -27,6 +29,10 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   return res.status(500).json(errorResponse('Internal Server Error'))
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV === 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`)
+  })
+}
+
+export const viteNodeApp = app
