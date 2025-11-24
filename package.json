@@ -10,11 +10,13 @@
     "chalk": "^5.6.2",
     "express": "^5.1.0",
     "figlet": "^1.9.3",
-    "openai": "^6.7.0"
+    "openai": "^6.7.0",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
     "ts-node": "^10.9.2",
     "tsc-watch": "^7.2.0",
     "typescript": "^5.9.3"
