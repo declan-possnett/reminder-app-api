@@ -52,7 +52,7 @@ router.post(
     const { title, description, date, completed } = reminder.data
 
     const newReminder = await pool.query(
-      `INSERT INTO reminders title, description, date, completed VALUES $1, $2, $3, $4 RETURNING *`,
+      `INSERT INTO reminders (title, description, date, completed) VALUES ($1, $2, $3, $4) RETURNING *`,
       [title, description, date, completed],
     )
 
