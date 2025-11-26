@@ -21,7 +21,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const result = await pool.query(
-      `SELECT * FROM reminders WHERE userId = $1 LIMIT 10`,
+      `SELECT * FROM reminders WHERE userid = $1 LIMIT 10`,
       [(req as any).user.id],
     )
 
@@ -34,7 +34,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const result = await pool.query(
-      `SELECT * FROM reminders WHERE id = $1 AND userId = $2`,
+      `SELECT * FROM reminders WHERE id = $1 AND userid = $2`,
       [req.params.id, (req as any).user.id],
     )
 
@@ -58,7 +58,7 @@ router.post(
     const { title, description, date, completed } = reminder.data
 
     const newReminder = await pool.query(
-      `INSERT INTO reminders (id, title, description, date, completed, userId) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      `INSERT INTO reminders (id, title, description, date, completed, userid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [randomUUID(), title, description, date, completed, (req as any).user.id],
     )
 
@@ -78,7 +78,7 @@ router.patch(
     const { title, description, date, completed } = reminder.data
 
     const newReminder = await pool.query(
-      `UPDATE reminders SET title = $1, description = $2, date = $3, completed = $4 WHERE id = $5 AND userId = $6 RETURNING *`,
+      `UPDATE reminders SET title = $1, description = $2, date = $3, completed = $4 WHERE id = $5 AND userid = $6 RETURNING *`,
       [
         title,
         description,
@@ -98,7 +98,7 @@ router.delete(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const result = await pool.query(
-      `DELETE FROM reminders WHERE id = $1 AND userId = $2`,
+      `DELETE FROM reminders WHERE id = $1 AND userid = $2`,
       [req.params.id, (req as any).user.id],
     )
 
