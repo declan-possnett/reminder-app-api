@@ -11,7 +11,7 @@ const router = Router()
 const reminderSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  date: z.date().nullable().default(null),
+  date: z.coerce.date().nullable().default(null),
   completed: z.boolean().default(false),
 })
 
