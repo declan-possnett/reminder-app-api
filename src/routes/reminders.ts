@@ -1,11 +1,16 @@
-import { Router, type Request, type Response } from 'express'
+import { Router, type Response } from 'express'
 import pool from '@/db'
 import { asyncHandler } from '@/utils/asyncHandler'
-import { NotFoundError, ValidationError } from '@/utils/errors'
+import {
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from '@/utils/errors'
 import { successResponse } from '@/utils/response'
 import { authenticate } from '@/middleware/auth'
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
+import { AuthRequest } from './types'
 
 const router = Router()
 
@@ -19,10 +24,14 @@ const reminderSchema = z.object({
 router.get(
   '/',
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Not authorized')
+    }
+
     const result = await pool.query(
       `SELECT * FROM reminders WHERE userId = $1 LIMIT 10`,
-      [(req as any).user.id],
+      [req.user.id],
     )
 
     return res.json(successResponse(result.rows))
@@ -32,10 +41,14 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Not authorized')
+    }
+
     const result = await pool.query(
       `SELECT * FROM reminders WHERE id = $1 AND userId = $2`,
-      [req.params.id, (req as any).user.id],
+      [req.params.id, req.user.id],
     )
 
     if (!result.rowCount) {
@@ -49,7 +62,11 @@ router.get(
 router.post(
   '/',
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Not authorized')
+    }
+
     const reminder = reminderSchema.safeParse(req.body)
     if (!reminder.success) {
       throw new ValidationError('Invalid input')
@@ -59,7 +76,7 @@ router.post(
 
     const newReminder = await pool.query(
       `INSERT INTO reminders (id, title, description, date, completed, userId) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [randomUUID(), title, description, date, completed, (req as any).user.id],
+      [randomUUID(), title, description, date, completed, req.user.id],
     )
 
     return res.status(201).json(successResponse(newReminder.rows[0]))
@@ -69,7 +86,11 @@ router.post(
 router.patch(
   '/:id',
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Not authorized')
+    }
+
     const reminder = reminderSchema.safeParse(req.body)
     if (!reminder.success) {
       throw new ValidationError('Invalid input')
@@ -79,14 +100,7 @@ router.patch(
 
     const updatedReminder = await pool.query(
       `UPDATE reminders SET title = $1, description = $2, date = $3, completed = $4 WHERE id = $5 AND userId = $6 RETURNING *`,
-      [
-        title,
-        description,
-        date,
-        completed,
-        req.params.id,
-        (req as any).user.id,
-      ],
+      [title, description, date, completed, req.params.id, req.user.id],
     )
 
     if (!updatedReminder.rowCount) {
@@ -100,10 +114,14 @@ router.patch(
 router.delete(
   '/:id',
   authenticate,
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      throw new UnauthorizedError('Not authorized')
+    }
+
     const result = await pool.query(
       `DELETE FROM reminders WHERE id = $1 AND userId = $2`,
-      [req.params.id, (req as any).user.id],
+      [req.params.id, req.user.id],
     )
 
     if (!result.rowCount) {
