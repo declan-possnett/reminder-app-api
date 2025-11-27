@@ -25,7 +25,7 @@ router.get(
   '/',
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    if (!req.user) {
+    if (!req.user?.id) {
       throw new UnauthorizedError('Not authorized')
     }
 
@@ -42,7 +42,7 @@ router.get(
   '/:id',
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    if (!req.user) {
+    if (!req.user?.id) {
       throw new UnauthorizedError('Not authorized')
     }
 
@@ -63,7 +63,7 @@ router.post(
   '/',
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    if (!req.user) {
+    if (!req.user?.id) {
       throw new UnauthorizedError('Not authorized')
     }
 
@@ -87,7 +87,7 @@ router.patch(
   '/:id',
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    if (!req.user) {
+    if (!req.user?.id) {
       throw new UnauthorizedError('Not authorized')
     }
 
@@ -115,7 +115,7 @@ router.delete(
   '/:id',
   authenticate,
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    if (!req.user) {
+    if (!req.user?.id) {
       throw new UnauthorizedError('Not authorized')
     }
 
