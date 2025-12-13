@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Response, Router } from 'express'
 import { generateToken, hashPassword, comparePassword } from '@/utils/auth'
 import { errorResponse, successResponse } from '@/utils/response'
 import { asyncHandler } from '@/utils/asyncHandler'
@@ -6,6 +6,8 @@ import rateLimit from 'express-rate-limit'
 import pool from '@/db'
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
+import { authenticate } from '@/middleware/auth'
+import { AuthedRequest } from './types'
 
 const router = Router()
 
@@ -101,6 +103,16 @@ router.post(
         sameSite: 'none',
       })
       .json(successResponse(safeUser))
+  }),
+)
+
+router.get(
+  '/me',
+  authenticate,
+  asyncHandler(async (req: AuthedRequest, res: Response) => {
+    res.json({
+      id: req.user.id,
+    })
   }),
 )
 
