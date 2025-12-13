@@ -11,12 +11,15 @@ export const authenticate = (
   next: NextFunction,
 ): asserts req is AuthedRequest => {
   const authHeader = req.headers.authorization
-  if (!authHeader) {
-    res.status(401).json({ error: 'Missing Authorization header' })
+  const tokenFromHeader = authHeader?.split(' ')[1]
+  const tokenFromCookie = req.cookies?.token
+
+  const token = tokenFromHeader || tokenFromCookie
+  if (!token) {
+    res.status(401).json({ error: 'Missing token' })
     return
   }
 
-  const token = authHeader.split(' ')[1]
   try {
     const user = jwt.verify(token, JWT_SECRET) as User
 

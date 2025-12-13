@@ -4,6 +4,7 @@ import express, {
   type NextFunction,
 } from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import remindersRouter from '@/routes/reminders'
 import authRouter from '@/routes/auth'
 import { AppError } from '@/utils/errors'
@@ -13,6 +14,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(express.json())
+app.use(cookieParser())
 
 app.use(
   cors({
