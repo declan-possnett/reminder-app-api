@@ -18,7 +18,12 @@ app.use(cookieParser())
 
 app.use(
   cors({
-    origin: ['http://localhost:9000'],
+    origin: [
+      'http://localhost:9000',
+      'capacitor://localhost',
+      'http://localhost',
+      'https://your-railway-url.up.railway.app',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
