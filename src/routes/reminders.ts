@@ -22,7 +22,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: AuthedRequest, res: Response) => {
     const result = await pool.query(
-      `SELECT * FROM reminders WHERE userId = $1 LIMIT 10`,
+      `SELECT * FROM reminders WHERE userId = $1 ORDER BY date DESC LIMIT 10`,
       [req.user.id],
     )
 
