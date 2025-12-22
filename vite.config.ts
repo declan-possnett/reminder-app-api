@@ -44,4 +44,5 @@ export default defineConfig({
       reloadAppOnFileChange: true,
     }),
   ],
+  cacheDir: './.vite',
 })
